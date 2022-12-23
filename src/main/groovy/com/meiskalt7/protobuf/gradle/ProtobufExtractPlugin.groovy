@@ -67,6 +67,7 @@ class ProtobufExtractPlugin implements Plugin<Project> {
             'com.android.library',
             'android',
             'android-library',
+            'com.google.protobuf'
     ]
 
     private Project project
@@ -184,6 +185,7 @@ class ProtobufExtractPlugin implements Plugin<Project> {
         SourceSet sourceSet, ProtoSourceSet protoSourceSet,
         Configuration protobufConfig, Collection<Closure> postConfigure) {
       Provider<ProtobufExtract> extractProtosTask = setupExtractProtosTask(protoSourceSet, protobufConfig)
+      project.tasks.getByName("generateProto").dependsOn(extractProtosTask)
 
       // Make protos in 'test' sourceSet able to import protos from the 'main' sourceSet.
       // Pass include proto files from main to test.

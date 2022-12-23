@@ -33,7 +33,7 @@ apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'com.github.ben-manes.versions'
 
 group = 'com.google.protobuf'
-version = '0.9.677-SNAPSHOT'
+version = '0.9.680-SNAPSHOT'
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -50,6 +50,7 @@ configurations {
 }
 
 dependencies {
+  runtime "com.google.protobuf:protobuf-gradle-plugin:0.9.1"
   compileOnly "com.android.tools.build:gradle:4.1.0"
 
   implementation 'com.google.gradle:osdetector-gradle-plugin:1.7.1'

@@ -54,7 +54,7 @@ abstract class ProtobufExtract extends DefaultTask {
   private final FileCollection filteredProtos = instantiateFilteredProtos()
 
   @OutputDirectory
-  public abstract DirectoryProperty getDestDir()
+  abstract DirectoryProperty getDestDir()
 
   @Input
   abstract ListProperty<String> getProtoFolders()
@@ -63,7 +63,7 @@ abstract class ProtobufExtract extends DefaultTask {
    * Input for this tasks containing all archive files to extract.
    */
   @Internal
-  public abstract ConfigurableFileCollection getInputFiles()
+  abstract ConfigurableFileCollection getInputFiles()
 
   /**
    * Inputs for this task containing only proto files, which is enough for up-to-date checks.
@@ -71,13 +71,13 @@ abstract class ProtobufExtract extends DefaultTask {
    */
   @InputFiles
   @PathSensitive(PathSensitivity.RELATIVE)
-  public FileTree getInputProtoFiles() {
+  FileTree getInputProtoFiles() {
     return filteredProtos.asFileTree
       .matching { PatternFilterable pattern -> pattern.include("**/*.proto") }
   }
 
   @TaskAction
-  public void extract() {
+  void extract() {
     copyActionFacade.copy { spec ->
       spec.includeEmptyDirs = false
       spec.from(inputProtoFiles)

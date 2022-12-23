@@ -40,8 +40,8 @@ import spock.lang.Unroll
  */
 @CompileDynamic
 class IDESupportTest extends Specification {
-  // Current supported version is Gradle 5+.
-  private static final List<String> GRADLE_VERSIONS = ["5.6", "6.0", "6.7.1", "7.4.2"]
+  // Current supported version is Gradle 6+.
+  private static final List<String> GRADLE_VERSIONS = ["6.0", "6.7.1", "7.4.2"]
 
   @Unroll
   void "testProject proto and generated output directories should be added to intellij [gradle #gradleVersion]"() {

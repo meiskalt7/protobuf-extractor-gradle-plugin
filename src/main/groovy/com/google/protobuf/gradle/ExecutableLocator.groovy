@@ -85,20 +85,6 @@ class ExecutableLocator implements Named {
   }
 
   @PackageScope
-  FileCollection getArtifactFiles() {
-    Preconditions.checkState(path == null, 'Not artifact based')
-    Preconditions.checkState(artifactFiles != null, 'Not yet created resolved')
-    return artifactFiles
-  }
-
-  @PackageScope
-  String getSimplifiedArtifactName() {
-    Preconditions.checkState(path == null, 'Not artifact based')
-    Preconditions.checkState(simplifiedArtifactName != null, 'Not yet resolved')
-    return simplifiedArtifactName
-  }
-
-  @PackageScope
   void resolve(FileCollection artifactFiles, String simplifiedArtifactName) {
     this.artifactFiles = artifactFiles
     this.simplifiedArtifactName = simplifiedArtifactName

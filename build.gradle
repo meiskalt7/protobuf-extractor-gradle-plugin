@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id "org.gradle.kotlin.kotlin-dsl" version "1.4.9"
+    id "org.gradle.kotlin.kotlin-dsl" version "2.1.4"
 }
 
 println """\
@@ -23,11 +23,11 @@ Base directory: $projectDir
 Running script ${relativePath(buildFile)}
 """
 
-apply plugin: 'codenarc'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'groovy'
-apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'com.jfrog.bintray'
@@ -46,6 +46,7 @@ repositories {
     // Needed for resolving 'kotlinx-metadata-jvm'
     // A transitive dependency of gradle Kotlin DSL
     maven { url "https://kotlin.bintray.com/kotlinx/" }
+  mavenCentral()
 }
 
 configurations {
@@ -58,11 +59,12 @@ dependencies {
 
   implementation 'com.google.gradle:osdetector-gradle-plugin:1.7.1'
 
-  testImplementation 'junit:junit:4.12'
-  testImplementation('org.spockframework:spock-core:1.0-groovy-2.4') {
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.spockframework:spock-junit4:2.3-groovy-3.0'
+  testImplementation('org.spockframework:spock-core:2.3-groovy-3.0') {
     exclude module: 'groovy-all'
   }
-  testImplementation 'commons-io:commons-io:2.5'
+  testImplementation 'commons-io:commons-io:2.11.0'
 }
 
 test.inputs.files fileTree("$projectDir/testProject")
@@ -84,10 +86,6 @@ task groovydocJar(type: Jar, dependsOn:groovydoc) {
 task javadocJar(type: Jar, dependsOn:javadoc) {
      classifier = 'javadoc'
      from javadoc.destinationDir
-}
-
-codenarc {
-    toolVersion = "1.4"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -184,12 +182,6 @@ pluginBundle {
   }
 }
 
-if (System.env.CI == 'true') {
-  // Normally html output is more user friendly,
-  // but we want a console printable file for CI logs
-  project.codenarc.reportFormat = 'text'
-}
-
 // Required in order to support building a mixed kotlin/groovy project. With out this,
 // we would get a cyclic dependency error, since both compileKotlin and compileGroovy
 // depend on compileJava.
@@ -205,6 +197,7 @@ tasks.named('test') {
   testLogging {
     events = ["standard_out", "standard_error", "started", "passed", "failed", "skipped"]
   }
+  useJUnitPlatform()
 
   // Hack for gradle runner test classloader.
   //

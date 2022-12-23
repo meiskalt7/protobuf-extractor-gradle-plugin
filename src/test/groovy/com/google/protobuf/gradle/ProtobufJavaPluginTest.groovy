@@ -15,7 +15,7 @@ import spock.lang.Unroll
 @CompileDynamic
 class ProtobufJavaPluginTest extends Specification {
   // Current supported version is Gradle 5+.
-  private static final List<String> GRADLE_VERSIONS = ["5.6", "6.0", "6.7.1", "7.4.2"]
+  private static final List<String> GRADLE_VERSIONS = ["6.7.1", "7.4.2"]
   private static final List<String> KOTLIN_VERSIONS = ["1.3.20", "1.3.31", "1.3.40"]
 
   void "testApplying java and com.google.protobuf adds corresponding task to project"() {
@@ -26,8 +26,6 @@ class ProtobufJavaPluginTest extends Specification {
     project.evaluate()
 
     then: "generate tasks added"
-    assert project.tasks.generateProto instanceof GenerateProtoTask
-    assert project.tasks.generateTestProto instanceof GenerateProtoTask
 
     assert project.tasks.extractIncludeProto instanceof ProtobufExtract
     assert project.tasks.extractIncludeTestProto instanceof ProtobufExtract
@@ -63,7 +61,6 @@ class ProtobufJavaPluginTest extends Specification {
     project.evaluate()
 
     then: "tasks for main2 added"
-    assert project.tasks.generateMain2Proto instanceof GenerateProtoTask
 
     assert project.tasks.extractIncludeMain2Proto instanceof ProtobufExtract
     assert project.tasks.extractMain2Proto instanceof ProtobufExtract

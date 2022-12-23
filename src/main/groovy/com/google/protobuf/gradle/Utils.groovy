@@ -85,17 +85,6 @@ class Utils {
   }
 
   /**
-   * Returns the compile task name for Kotlin.
-   */
-  static String getKotlinAndroidCompileTaskName(Project project, String variantName) {
-    // The kotlin plugin does not provide a utility for this.
-    // Fortunately, the naming scheme is well defined:
-    // https://kotlinlang.org/docs/reference/using-gradle.html#compiler-options
-    Preconditions.checkState(isAndroidProject(project))
-    return "compile" + variantName.capitalize() + "Kotlin"
-  }
-
-  /**
    * Returns true if the source set is a test related source set.
    */
   static boolean isTest(String sourceSetOrVariantName) {

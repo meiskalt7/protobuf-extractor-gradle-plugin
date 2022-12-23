@@ -39,17 +39,4 @@ final class Preconditions {
       throw new IllegalStateException();
     }
   }
-
-  public static void checkState(boolean expectedState, Object errorMessage) {
-    if (!expectedState) {
-      throw new IllegalStateException(String.valueOf(errorMessage));
-    }
-  }
-
-  public static <T> T checkNotNull(T obj, Object errorMessage) {
-    if (obj == null) {
-      throw new NullPointerException(String.valueOf(errorMessage));
-    }
-    return obj;
-  }
 }

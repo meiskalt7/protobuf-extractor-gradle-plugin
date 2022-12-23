@@ -31,20 +31,12 @@ package com.google.protobuf.gradle
 
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileTree
+import org.gradle.api.file.*
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.util.GradleVersion
@@ -63,6 +55,9 @@ abstract class ProtobufExtract extends DefaultTask {
 
   @OutputDirectory
   public abstract DirectoryProperty getDestDir()
+
+  @Input
+  abstract Property<List<String>> getProtoFolders()
 
   /**
    * Input for this tasks containing all archive files to extract.
@@ -99,19 +94,11 @@ abstract class ProtobufExtract extends DefaultTask {
   protected abstract ProviderFactory getProviderFactory()
 
   private CopyActionFacade instantiateCopyActionFacade() {
-    if (GradleVersion.current() >= GradleVersion.version("6.0")) {
-      // Use object factory to instantiate as that will inject the necessary service.
-      return objectFactory.newInstance(CopyActionFacade.FileSystemOperationsBased)
-    }
-    return new CopyActionFacade.ProjectBased(project)
+    return objectFactory.newInstance(CopyActionFacade.FileSystemOperationsBased)
   }
 
   private ArchiveActionFacade instantiateArchiveActionFacade() {
-    if (GradleVersion.current() >= GradleVersion.version("6.0")) {
-      // Use object factory to instantiate as that will inject the necessary service.
-      return objectFactory.newInstance(ArchiveActionFacade.ServiceBased)
-    }
-    return new ArchiveActionFacade.ProjectBased(project)
+    return objectFactory.newInstance(ArchiveActionFacade.ServiceBased)
   }
 
   private FileCollection instantiateFilteredProtos() {
@@ -125,7 +112,13 @@ abstract class ProtobufExtract extends DefaultTask {
         .from(inputFiles.filter { false })
         .from(providerFactory.provider { unused ->
       Set<File> files = inputFiles.files
-      PatternSet protoFilter = new PatternSet().include("**/*.proto")
+      PatternSet protoFilter = new PatternSet()
+      // get only selected proto folders
+      for (folder in protoFolders.getOrElse(Collections.<String>emptyList())) {
+        protoFilter.include("**/$folder/*.proto")
+      }
+      if (protoFolders.get().isEmpty()) protoFilter.include("**/*.proto")
+
       Set<Object> protoInputs = [] as Set
       for (File file : files) {
         if (file.isDirectory()) {

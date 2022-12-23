@@ -12,15 +12,15 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 
-val ConfigurationContainer.protobuf: Configuration
-    get() = getByName("protobuf")
+val ConfigurationContainer.protobufExtract: Configuration
+    get() = getByName("protobufExtract")
 
-val DependencyHandler.protobuf by  ProtobufDependencyHelper
+val DependencyHandler.protobufExtract by  ProtobufDependencyHelper
 
-val ConfigurationContainer.testProtobuf: Configuration
-    get() = getByName("testProtobuf")
+val ConfigurationContainer.testProtobufExtract: Configuration
+    get() = getByName("testProtobufExtract")
 
-val DependencyHandler.testProtobuf by  ProtobufDependencyHelper
+val DependencyHandler.testProtobufExtract by  ProtobufDependencyHelper
 
 class ProtobufDependencyHelper(
     private val configurationName: String,

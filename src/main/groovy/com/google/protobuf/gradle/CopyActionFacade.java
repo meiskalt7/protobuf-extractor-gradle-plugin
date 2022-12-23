@@ -48,20 +48,6 @@ interface CopyActionFacade {
     WorkResult copy(Action<? super CopySpec> var1);
 
     @CompileStatic
-    class ProjectBased implements CopyActionFacade {
-        private final Project project;
-
-        public ProjectBased(Project project) {
-            this.project = project;
-        }
-
-        @Override
-        public WorkResult copy(Action<? super CopySpec> action) {
-            return project.copy(action);
-        }
-    }
-
-    @CompileStatic
     abstract class FileSystemOperationsBased implements CopyActionFacade {
         @Inject
         public abstract FileSystemOperations getFileSystemOperations();

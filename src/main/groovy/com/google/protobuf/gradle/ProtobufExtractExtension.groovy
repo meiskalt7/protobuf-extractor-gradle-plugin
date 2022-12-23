@@ -45,7 +45,7 @@ import org.gradle.api.tasks.TaskCollection
 @CompileStatic
 // gradle require abstract modificator on extensions
 @SuppressWarnings(["AbstractClassWithoutAbstractMethod", "AbstractClassWithPublicConstructor"])
-abstract class ProtobufExtension {
+abstract class ProtobufExtractExtension {
   private final Project project
   private final ToolsLocator tools
   private final NamedDomainObjectContainer<ProtoSourceSet> sourceSets
@@ -56,7 +56,7 @@ abstract class ProtobufExtension {
    */
   private String generatedFilesBaseDir
 
-  public ProtobufExtension(final Project project) {
+  public ProtobufExtractExtension(final Project project) {
     this.project = project
     this.tools = new ToolsLocator(project)
     this.generatedFilesBaseDir = "${project.buildDir}/generated/source/proto"

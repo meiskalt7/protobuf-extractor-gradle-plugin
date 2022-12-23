@@ -45,17 +45,11 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.attributes.Usage
 import org.gradle.api.file.CopySpec
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceTask
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 
@@ -63,7 +57,7 @@ import org.gradle.util.GradleVersion
  * The main class for the protobuf plugin.
  */
 @CompileStatic
-class ProtobufPlugin implements Plugin<Project> {
+class ProtobufExtractPlugin implements Plugin<Project> {
     // any one of these plugins should be sufficient to proceed with applying this plugin
     private static final List<String> PREREQ_PLUGIN_OPTIONS = [
             'java',
@@ -76,7 +70,7 @@ class ProtobufPlugin implements Plugin<Project> {
     ]
 
     private Project project
-    private ProtobufExtension protobufExtension
+    private ProtobufExtractExtension protobufExtractExtension
     private boolean wasApplied = false
 
     void apply(final Project project) {
@@ -85,7 +79,7 @@ class ProtobufPlugin implements Plugin<Project> {
           "Gradle version is ${project.gradle.gradleVersion}. Minimum supported version is 5.6")
       }
 
-      this.protobufExtension = project.extensions.create("protobuf", ProtobufExtension, project)
+      this.protobufExtractExtension = project.extensions.create("protobufExtract", ProtobufExtractExtension, project)
 
       this.project = project
 
@@ -130,7 +124,7 @@ class ProtobufPlugin implements Plugin<Project> {
         Collection<Closure> postConfigure = []
         if (isAndroid) {
           project.android.sourceSets.configureEach { sourceSet ->
-            ProtoSourceSet protoSourceSet = protobufExtension.sourceSets.create(sourceSet.name)
+            ProtoSourceSet protoSourceSet = protobufExtractExtension.sourceSets.create(sourceSet.name)
             addSourceSetExtension(sourceSet, protoSourceSet)
             Configuration protobufConfig = createProtobufConfiguration(protoSourceSet)
             setupExtractProtosTask(protoSourceSet, protobufConfig)
@@ -145,18 +139,18 @@ class ProtobufPlugin implements Plugin<Project> {
           }
         } else {
           project.sourceSets.configureEach { sourceSet ->
-            ProtoSourceSet protoSourceSet = protobufExtension.sourceSets.create(sourceSet.name)
+            ProtoSourceSet protoSourceSet = protobufExtractExtension.sourceSets.create(sourceSet.name)
             addSourceSetExtension(sourceSet, protoSourceSet)
             Configuration protobufConfig = createProtobufConfiguration(protoSourceSet)
             addTasksForSourceSet(sourceSet, protoSourceSet, protobufConfig, postConfigure)
           }
         }
         project.afterEvaluate {
-          this.protobufExtension.configureTasks()
+          this.protobufExtractExtension.configureTasks()
           // Disallow user configuration outside the config closures, because the operations just
           // after the doneConfig() loop over the generated outputs and will be out-of-date if
           // plugin output is added after this point.
-          this.protobufExtension.generateProtoTasks.all().configureEach { it.doneConfig() }
+          this.protobufExtractExtension.generateProtoTasks.all().configureEach { it.doneConfig() }
           postConfigure.each { it.call() }
           // protoc and codegen plugin configuration may change through the protobuf{}
           // block. Only at this point the configuration has been finalized.
@@ -202,7 +196,7 @@ class ProtobufPlugin implements Plugin<Project> {
       // Make protos in 'test' sourceSet able to import protos from the 'main' sourceSet.
       // Pass include proto files from main to test.
       if (Utils.isTest(sourceSet.name)) {
-        protoSourceSet.includesFrom(protobufExtension.sourceSets.getByName("main"))
+        protoSourceSet.includesFrom(protobufExtractExtension.sourceSets.getByName("main"))
       }
 
       sourceSet.java.srcDirs(protoSourceSet.output)
@@ -241,14 +235,14 @@ class ProtobufPlugin implements Plugin<Project> {
       // Pass include proto files from main to test.
       if (variant instanceof TestVariant || variant instanceof UnitTestVariant) {
         postConfigure.add {
-          variantSourceSet.includesFrom(protobufExtension.sourceSets.getByName("main"))
+          variantSourceSet.includesFrom(protobufExtractExtension.sourceSets.getByName("main"))
           variantSourceSet.includesFrom(variantSourceSets.getByName(variant.testedVariant.name))
         }
       }
 
       // GenerateProto task, one per variant (compilation unit).
       variant.sourceSets.each { SourceProvider sourceProvider ->
-        variantSourceSet.extendsFrom(protobufExtension.sourceSets.getByName(sourceProvider.name))
+        variantSourceSet.extendsFrom(protobufExtractExtension.sourceSets.getByName(sourceProvider.name))
       }
 
       if (project.android.hasProperty('libraryVariants')) {

@@ -1,9 +1,0 @@
-// This build is not a complete project, but is used to generate a project.
-// See: ProtobufPluginTestHelper.groovy
-plugins {
-  id 'java'
-  id 'idea'
-  id 'eclipse'
-  id 'com.google.protobuf'
-}
-apply from: 'build_base.gradle'

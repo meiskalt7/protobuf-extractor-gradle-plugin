@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-option java_package = "ext1";
-option java_outer_classname = "Ext1Test1";
-
-message Ext1Test1Msg {
-    string bar = 1;
-}

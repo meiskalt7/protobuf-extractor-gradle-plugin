@@ -15,14 +15,14 @@ import kotlin.reflect.KProperty
 val ConfigurationContainer.protobufExtract: Configuration
     get() = getByName("protobufExtract")
 
-val DependencyHandler.protobufExtract by  ProtobufDependencyHelper
+val DependencyHandler.protobufExtract by  ProtobufExtractDependencyHelper
 
 val ConfigurationContainer.testProtobufExtract: Configuration
     get() = getByName("testProtobufExtract")
 
-val DependencyHandler.testProtobufExtract by  ProtobufDependencyHelper
+val DependencyHandler.testProtobufExtract by  ProtobufExtractDependencyHelper
 
-class ProtobufDependencyHelper(
+class ProtobufExtractDependencyHelper(
     private val configurationName: String,
     private val dependencyHandler: DependencyHandler
 ) {
@@ -69,9 +69,9 @@ class ProtobufDependencyHelper(
     ): T =
         dependencyHandler.add(configurationName, dependency, dependencyConfiguration)
 
-    companion object : ReadOnlyProperty<DependencyHandler, ProtobufDependencyHelper> {
+    companion object : ReadOnlyProperty<DependencyHandler, ProtobufExtractDependencyHelper> {
 
-        override fun getValue(thisRef: DependencyHandler, property: KProperty<*>): ProtobufDependencyHelper =
-            ProtobufDependencyHelper(property.name, thisRef)
+        override fun getValue(thisRef: DependencyHandler, property: KProperty<*>): ProtobufExtractDependencyHelper =
+            ProtobufExtractDependencyHelper(property.name, thisRef)
     }
 }

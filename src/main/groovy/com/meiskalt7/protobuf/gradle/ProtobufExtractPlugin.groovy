@@ -75,9 +75,9 @@ class ProtobufExtractPlugin implements Plugin<Project> {
     private boolean wasApplied = false
 
     void apply(final Project project) {
-      if (GradleVersion.current() < GradleVersion.version("5.6")) {
+      if (GradleVersion.current() < GradleVersion.version("6.6")) {
         throw new GradleException(
-          "Gradle version is ${project.gradle.gradleVersion}. Minimum supported version is 5.6")
+          "Gradle version is ${project.gradle.gradleVersion}. Minimum supported version is 6.6")
       }
 
       this.protobufExtractExtension = project.extensions.create("protobufExtract", ProtobufExtractExtension, project)
@@ -172,7 +172,7 @@ class ProtobufExtractPlugin implements Plugin<Project> {
     private SourceDirectorySet addSourceSetExtension(Object sourceSet, ProtoSourceSet protoSourceSet) {
       String name = sourceSet.name
       SourceDirectorySet sds = protoSourceSet.proto
-      // sourceSet.extensions.add('proto', sds)
+      sourceSet.extensions.add('proto', sds)
       sds.srcDir("src/${name}/proto")
       sds.include("**/*.proto")
       return sds
